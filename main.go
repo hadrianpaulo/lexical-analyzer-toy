@@ -1,42 +1,66 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // A.1 Remember: if in starting state or any error state, clear out the lexemeHolder
 // BUT DONT throw away the new character
 // A.2 this case shouldnt happen WHEN note A.1 is fulfilled ???
 // B.1 variable mutation does not get reflected unless return immediately in nested case > if
+// C.1 Handle termination state. Should output lexemeHolder and reassign state to start
 
 func main() {
-	char := `'`
-	lexemeHolder := ""
+	// b, err := ioutil.ReadFile("test/input/samp1.txt") // just pass the file name
+	// if err != nil {
+	// 	fmt.Print(err)
+	// }
+
+	// str := string(b) // convert content to a 'string'
+	// for _, r := range str {
+	// 	c := string(r)
+	// 	fmt.Println(c)
+	// }
+
+	// char := `'`
+	// lexemeHolder := ""
 	currentState := start
-	currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	char = "a"
-	currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	char = "d"
-	currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	char = `'`
-	currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	char = "*"
-	lexemeHolder = ""
-	currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	char = "*"
-	currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	char = "("
-	lexemeHolder = ""
-	currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	char = "1"
-	lexemeHolder = ""
-	currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
+	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
+	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
+	// char = "a"
+	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
+	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
+	// char = `"`
+	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
+	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
+	// char = `'`
+	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
+	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
+	// char = "*"
+	// lexemeHolder = ""
+	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
+	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
+	// char = "*"
+	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
+	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
+	str := `"sda"`
+	lexemeHolder := ""
+	prevState := start
+	for _, char := range str {
+		for currentState != terminated {
+			prevState = currentState
+			currentState, lexemeHolder = stateMachine(currentState, string(char), lexemeHolder)
+		}
+	}
+	fmt.Println("State: ", prevState, "Lexeme: ", lexemeHolder[:len(lexemeHolder)-1])
+	// char = "1"
+	// lexemeHolder = ""
+	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
+	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
+	// char = "a"
+	// lexemeHolder = ""
+	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
+	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
 }
 
 func stateMachine(currentState state, char string, lexemeHolder string) (state, string) {
@@ -56,6 +80,8 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 			newState = plus
 		case isMinus(char):
 			newState = minus
+		case isDiv(char):
+			newState = div
 		case isMod(char):
 			newState = mod
 		case isSemicolon(char):
@@ -79,13 +105,13 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		if isLetter(char) || isNumber(char) {
 			newState = ident
 		} else if isSpace(char) {
-			newState = start
+			newState = terminated
 		} else {
 			newState = illegalCharacter
 		}
 	case strSingle:
 		if isSingleQuote(char) {
-			newState = start
+			newState = terminated
 			lexemeHolder += char
 			// B.1
 			return newState, lexemeHolder
@@ -93,7 +119,7 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		newState = strSingle
 	case strDouble:
 		if isDoubleQuote(char) {
-			newState = start
+			newState = terminated
 			lexemeHolder += char
 			// B.1
 			return newState, lexemeHolder
@@ -105,23 +131,26 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 			lexemeHolder += char
 			return newState, lexemeHolder
 		}
-		newState = start
+		newState = terminated
 	case exp:
-		newState = start
+		newState = terminated
 	case plus:
-		newState = start
+		newState = terminated
 	case minus:
-		newState = start
+		newState = terminated
 	case mod:
-		newState = start
+		newState = terminated
 	case semicolon:
-		newState = start
+		newState = terminated
 	case lParen:
-		newState = start
+		newState = terminated
 	case rParen:
-		newState = start
+		newState = terminated
 	case equal:
+		newState = terminated
+	case terminated:
 		newState = start
+		lexemeHolder = ""
 	case illegalCharacter:
 		fmt.Println("Illegal character in lexeme ", lexemeHolder)
 		newState = illegalCharacter

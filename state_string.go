@@ -4,9 +4,9 @@ package main
 
 import "fmt"
 
-const _state_name = "startidentstrSinglestrDoublenumbermultexpplusminusdivmodlParenrParencommasemicolonequalillegalCharacterunterminatedStringbadlyFormedNumberunknownState"
+const _state_name = "startidentstrSinglestrDoublenumbermultexpcommentplusminusdivmodlParenrParencommasemicolonequalterminatedillegalCharacterunterminatedStringbadlyFormedNumberunknownState"
 
-var _state_index = [...]uint8{0, 5, 10, 19, 28, 34, 38, 41, 45, 50, 53, 56, 62, 68, 73, 82, 87, 103, 121, 138, 150}
+var _state_index = [...]uint8{0, 5, 10, 19, 28, 34, 38, 41, 48, 52, 57, 60, 63, 69, 75, 80, 89, 94, 104, 120, 138, 155, 167}
 
 func (i state) String() string {
 	if i < 0 || i >= state(len(_state_index)-1) {

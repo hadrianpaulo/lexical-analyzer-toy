@@ -16,7 +16,7 @@ const (
 	number
 	mult
 	exp
-	// terminal states
+	comment
 	plus
 	minus
 	div
@@ -26,6 +26,8 @@ const (
 	comma
 	semicolon
 	equal
+	// termination state/signal
+	terminated
 	// Error States
 	illegalCharacter
 	unterminatedString
@@ -144,6 +146,13 @@ func isDoubleQuote(s string) bool {
 
 func isDot(s string) bool {
 	if s != "." {
+		return false
+	}
+	return true
+}
+
+func isSlash(s string) bool {
+	if s != "/" {
 		return false
 	}
 	return true
