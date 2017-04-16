@@ -157,3 +157,10 @@ func isSlash(s string) bool {
 	}
 	return true
 }
+
+func isE(s string) bool {
+	if s == "E" || s == "e" {
+		return true
+	}
+	return false
+}
