@@ -100,6 +100,14 @@ func TestIdentifyIdent(t *testing.T) {
 	}
 }
 
+func TestIdentifyNumber(t *testing.T) {
+	str := `123 `
+	c, l := stateMachineLooper(str)
+	if c != number && l != str {
+		t.Error(`Expected: number`+str+`, got `, c, ": ", l)
+	}
+}
+
 // func TestIdentifyExp(t *testing.T) {
 // 	str := `**`
 // 	c, l := stateMachineLooper(str)

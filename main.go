@@ -113,6 +113,14 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		} else {
 			newState = illegalCharacter
 		}
+	case number:
+		if isNumber(char) {
+			newState = number
+		} else if isSpace(char) {
+			newState = terminated
+		} else {
+			newState = badlyFormedNumber
+		}
 	case strSingle:
 		if isSingleQuote(char) {
 			newState = terminated
