@@ -23,29 +23,6 @@ func main() {
 	// 	fmt.Println(c)
 	// }
 
-	// char := `'`
-	// lexemeHolder := ""
-
-	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	// char = "a"
-	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	// char = `"`
-	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	// char = `'`
-	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	// char = "*"
-	// lexemeHolder = ""
-	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	// char = "*"
-	// currentState, lexemeHolder = stateMachine(currentState, char, lexemeHolder)
-	// fmt.Println("State: ", currentState, "Lexeme: ", lexemeHolder)
-	// str := `*`
-	// c, l := stateMachineLooper(str)
 	str := `+`
 	c, l := stateMachineLooper(str)
 	fmt.Println("State: ", c, "Lexeme: ", l)
@@ -116,6 +93,30 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 	case number:
 		if isNumber(char) {
 			newState = number
+		} else if isDot(char) {
+			newState = numberDecimal
+		} else if isE(char) {
+			newState = numberExp
+		} else if isSpace(char) {
+			newState = terminated
+		} else {
+			newState = badlyFormedNumber
+		}
+	case numberDecimal:
+		if isNumber(char) {
+			newState = numberTerminal
+		} else {
+			newState = badlyFormedNumber
+		}
+	case numberExp:
+		if isNumber(char) || isMinus(char) {
+			newState = numberTerminal
+		} else {
+			newState = badlyFormedNumber
+		}
+	case numberTerminal:
+		if isNumber(char) {
+			newState = numberTerminal
 		} else if isSpace(char) {
 			newState = terminated
 		} else {
@@ -166,11 +167,12 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		lexemeHolder = ""
 	case illegalCharacter:
 		fmt.Println("Illegal character in lexeme ", lexemeHolder)
-		newState = illegalCharacter
+		newState = terminated
 	case unterminatedString: // A.2
 		fmt.Println("Encountered EOF before string termination: ", lexemeHolder)
-		newState = unterminatedString
+		newState = terminated
 	case badlyFormedNumber: // A.2
+		newState = terminated
 		fmt.Println("Badly formed number: ", lexemeHolder)
 	default:
 		newState = unknownState

@@ -100,13 +100,45 @@ func TestIdentifyIdent(t *testing.T) {
 	}
 }
 
-func TestIdentifyNumber(t *testing.T) {
+func TestIdentifyNormalNumber(t *testing.T) {
 	str := `123 `
 	c, l := stateMachineLooper(str)
 	if c != number && l != str {
 		t.Error(`Expected: number`+str+`, got `, c, ": ", l)
 	}
 }
+
+// func TestIdentifyDecimalNumber(t *testing.T) {
+// 	str := `123 `
+// 	c, l := stateMachineLooper(str)
+// 	if c != number && l != str {
+// 		t.Error(`Expected: number`+str+`, got `, c, ": ", l)
+// 	}
+// }
+
+// func TestIdentifyExpNumber(t *testing.T) {
+// 	str := `123 `
+// 	c, l := stateMachineLooper(str)
+// 	if c != number && l != str {
+// 		t.Error(`Expected: number`+str+`, got `, c, ": ", l)
+// 	}
+// }
+
+// func TestIdentifyDecimalExpNumber(t *testing.T) {
+// 	str := `123 `
+// 	c, l := stateMachineLooper(str)
+// 	if c != number && l != str {
+// 		t.Error(`Expected: number`+str+`, got `, c, ": ", l)
+// 	}
+// }
+
+// func TestIdentifyDecimalExpMinusNumber(t *testing.T) {
+// 	str := `123 `
+// 	c, l := stateMachineLooper(str)
+// 	if c != number && l != str {
+// 		t.Error(`Expected: number`+str+`, got `, c, ": ", l)
+// 	}
+// }
 
 // func TestIdentifyExp(t *testing.T) {
 // 	str := `**`

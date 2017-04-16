@@ -14,6 +14,10 @@ const (
 	strSingle
 	strDouble
 	number
+	numberDecimal
+	numberExp
+	numberDecimalExp
+	numberTerminal
 	mult
 	exp
 	comment
