@@ -7,43 +7,56 @@ import (
 // A.1 Remember: if in starting state or any error state, clear out the lexemeHolder
 // BUT DONT throw away the new character
 // A.2 this case shouldnt happen WHEN note A.1 is fulfilled ???
-// B.1 variable mutation does not get reflected unless return immediately in nested case > if
-// C.1 Handle termination state. Should output lexemeHolder and reassign state to start
-// C.2 Exp state is still an error
 
 func main() {
 	// b, err := ioutil.ReadFile("test/input/samp1.txt") // just pass the file name
 	// if err != nil {
 	// 	fmt.Print(err)
 	// }
-
 	// str := string(b) // convert content to a 'string'
 	// for _, r := range str {
 	// 	c := string(r)
 	// 	fmt.Println(c)
 	// }
-
-	str := `+`
-	c, l := stateMachineLooper(str)
-	fmt.Println("State: ", c, "Lexeme: ", l)
-
+	str := "e"
+	fmt.Println(isLetter(str))
+	c, l, d := stateMachineLooper(str)
+	fmt.Println(c, l, " :rem: ", d)
+	c, l, d = stateMachineLooper(d)
+	fmt.Println(c, l, " :rem: ", d)
 }
 
-func stateMachineLooper(s string) (state, string) {
+func stateMachineLooper(s string) (state, string, string) {
 	lexemeHolder := ""
 	currentState := start
 	prevState := start
+	counter := 0
+	over := false
 	for currentState != terminated {
-		for _, char := range s {
-			prevState = currentState
-			currentState, lexemeHolder = stateMachine(currentState, string(char), lexemeHolder)
+		str := ""
+		if len(s) > counter {
+			str = string(s[counter])
+		} else {
+			over = true
 		}
+		prevState = currentState
+		currentState, lexemeHolder = stateMachine(currentState, str, lexemeHolder)
+		counter++
 	}
-	return prevState, lexemeHolder[:len(lexemeHolder)-1]
+	rem := ""
+	if counter-1 <= len(s) {
+		rem = s[counter-1:]
+	}
+	if !over {
+		lexemeHolder = lexemeHolder[:len(lexemeHolder)-1]
+	}
+
+	return prevState, lexemeHolder[:len(lexemeHolder)], rem
 }
 
 func stateMachine(currentState state, char string, lexemeHolder string) (state, string) {
 	var newState state
+	lexemeHolder += char
 	switch currentState {
 	case start:
 		switch {
@@ -51,15 +64,15 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 			newState = ident
 		case isNumber(char):
 			newState = number
-		case isSpace(char):
-			newState = start
+		case isSpace(char) || isNewLine(char):
+			newState = terminated
 		case isComma(char):
 			newState = comma
 		case isPlus(char):
 			newState = plus
 		case isMinus(char):
 			newState = minus
-		case isDiv(char):
+		case isSlash(char):
 			newState = div
 		case isMod(char):
 			newState = mod
@@ -79,6 +92,10 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 			newState = strDouble
 		case isStar(char):
 			newState = mult
+		case isDot(char):
+			newState = period
+		case char == "":
+			newState = terminated
 		default:
 			newState = illegalCharacter
 		}
@@ -97,14 +114,14 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 			newState = numberDecimal
 		} else if isE(char) {
 			newState = numberExp
-		} else if isSpace(char) {
-			newState = terminated
 		} else {
-			newState = badlyFormedNumber
+			newState = terminated
 		}
 	case numberDecimal:
 		if isNumber(char) {
 			newState = numberTerminal
+		} else if isE(char) {
+			newState = numberExp
 		} else {
 			newState = badlyFormedNumber
 		}
@@ -117,34 +134,44 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 	case numberTerminal:
 		if isNumber(char) {
 			newState = numberTerminal
-		} else if isSpace(char) {
-			newState = terminated
 		} else {
-			newState = badlyFormedNumber
+			newState = terminated
 		}
 	case strSingle:
 		if isSingleQuote(char) {
-			newState = terminated
-			lexemeHolder += char + `'`
-			// B.1
-			return newState, lexemeHolder
+			newState = STRING
+		} else if isNewLine(char) {
+			newState = unterminatedString
+		} else {
+			newState = strSingle
 		}
-		newState = strSingle
 	case strDouble:
 		if isDoubleQuote(char) {
-			newState = terminated
-			lexemeHolder += char + `"`
-			// B.1
-			return newState, lexemeHolder
+			newState = STRING
+		} else if isNewLine(char) {
+			newState = unterminatedString
+		} else {
+			newState = strDouble
 		}
-		newState = strDouble
 	case mult:
 		if isStar(char) {
 			newState = exp
-			return newState, lexemeHolder
+		} else {
+			newState = terminated
 		}
-		newState = terminated
-	case exp: //C.2
+	case div:
+		if isSlash(char) {
+			newState = comment
+		} else {
+			newState = terminated
+		}
+	case comment:
+		if isNewLine(char) {
+			newState = terminated
+		} else {
+			newState = comment
+		}
+	case exp:
 		newState = terminated
 	case plus:
 		newState = terminated
@@ -162,22 +189,22 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		newState = terminated
 	case comma:
 		newState = terminated
+	case period:
+		newState = terminated
+	case STRING:
+		newState = terminated
 	case terminated:
 		newState = start
 		lexemeHolder = ""
 	case illegalCharacter:
-		fmt.Println("Illegal character in lexeme ", lexemeHolder)
 		newState = terminated
-	case unterminatedString: // A.2
-		fmt.Println("Encountered EOF before string termination: ", lexemeHolder)
+	case unterminatedString:
 		newState = terminated
-	case badlyFormedNumber: // A.2
+	case badlyFormedNumber:
 		newState = terminated
-		fmt.Println("Badly formed number: ", lexemeHolder)
 	default:
 		newState = unknownState
 		fmt.Println("Unhandled Case! Lexeme: ", lexemeHolder, " Last Recorded state: ", newState)
 	}
-	lexemeHolder += char
 	return newState, lexemeHolder
 }

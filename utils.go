@@ -5,6 +5,7 @@ import (
 	"unicode"
 )
 
+//go:generate stringer -type=state
 type state int
 
 const (
@@ -37,6 +38,8 @@ const (
 	unterminatedString
 	badlyFormedNumber
 	unknownState
+	period
+	STRING
 )
 
 // single character analyzers
@@ -45,6 +48,9 @@ func isLetter(s string) bool {
 		if !unicode.IsLetter(r) {
 			return false
 		}
+	}
+	if s == "" {
+		return false
 	}
 	return true
 }
@@ -73,13 +79,6 @@ func isMinus(s string) bool {
 
 func isStar(s string) bool {
 	if s != "*" {
-		return false
-	}
-	return true
-}
-
-func isDiv(s string) bool {
-	if s != "/" {
 		return false
 	}
 	return true
@@ -167,4 +166,11 @@ func isE(s string) bool {
 		return true
 	}
 	return false
+}
+
+func isNewLine(s string) bool {
+	if s != "\n" {
+		return false
+	}
+	return true
 }
