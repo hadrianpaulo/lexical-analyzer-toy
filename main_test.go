@@ -129,26 +129,26 @@ func TestIdentifyExpNumber(t *testing.T) {
 	}
 }
 
-// func TestIdentifyDecimalExpNumber(t *testing.T) {
-// 	str := `123.12e1`
-// 	c, l, d := stateMachineLooper(str)
-// 	if c != numberTerminal || l != str {
-// 		t.Error(`Expected: numberTerminal`+str+`, got `, c, ": ", l, " :rem: ", d)
-// 	}
-// 	str1 := `123.123E124`
-// 	c1, l1, d1 := stateMachineLooper(str1)
-// 	if c1 != numberTerminal || l1 != str1 {
-// 		t.Error(`Expected: number`+str1+`, got `, c1, ": ", l1, " :rem: ", d1)
-// 	}
-// }
+func TestIdentifyDecimalExpNumber(t *testing.T) {
+	str := `123.12e1`
+	c, l, d := stateMachineLooper(str)
+	if c != numberTerminal || l != str {
+		t.Error(`Expected: numberTerminal`+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+	str1 := `123.123E124`
+	c1, l1, d1 := stateMachineLooper(str1)
+	if c1 != numberTerminal || l1 != str1 {
+		t.Error(`Expected: number`+str1+`, got `, c1, ": ", l1, " :rem: ", d1)
+	}
+}
 
-// func TestIdentifyDecimalExpMinusNumber(t *testing.T) {
-// 	str := `123.12e-12`
-// 	c, l, d := stateMachineLooper(str)
-// 	if c != numberTerminal || l != str {
-// 		t.Error(`Expected: number`+str+`, got `, c, ": ", l, " :rem: ", d)
-// 	}
-// }
+func TestIdentifyDecimalExpMinusNumber(t *testing.T) {
+	str := `123.12e-12`
+	c, l, d := stateMachineLooper(str)
+	if c != numberTerminal || l != str {
+		t.Error(`Expected: number`+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+}
 
 func TestIdentifyExp(t *testing.T) {
 	str := `**`
