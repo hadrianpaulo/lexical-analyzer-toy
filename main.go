@@ -1,29 +1,41 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io/ioutil"
+	"os"
 )
 
-// A.1 Remember: if in starting state or any error state, clear out the lexemeHolder
-// BUT DONT throw away the new character
-// A.2 this case shouldnt happen WHEN note A.1 is fulfilled ???
-
 func main() {
-	// b, err := ioutil.ReadFile("test/input/samp1.txt") // just pass the file name
-	// if err != nil {
-	// 	fmt.Print(err)
-	// }
-	// str := string(b) // convert content to a 'string'
-	// for _, r := range str {
-	// 	c := string(r)
-	// 	fmt.Println(c)
-	// }
-	str := "e"
-	fmt.Println(isLetter(str))
+	inputFile := os.Args[1]
+	b, err := ioutil.ReadFile(inputFile)
+	if err != nil {
+		fmt.Print(err)
+	}
+	str := string(b)
+
+	outputFile := os.Args[2]
+	f, err := os.Create(outputFile)
+	if err != nil {
+		fmt.Print(err)
+	}
+	defer f.Close()
 	c, l, d := stateMachineLooper(str)
-	fmt.Println(c, l, " :rem: ", d)
-	c, l, d = stateMachineLooper(d)
-	fmt.Println(c, l, " :rem: ", d)
+	w := bufio.NewWriter(f)
+
+	_, err = fmt.Fprintf(w, "%v %v\n", pprint(c), l)
+	check(err)
+	w.Flush()
+	for d != "" {
+		c, l, d = stateMachineLooper(d)
+		if c != whitespace {
+			_, err = fmt.Fprintf(w, "%v %v\n", pprint(c), l)
+			check(err)
+			w.Flush()
+		}
+	}
+	f.Sync()
 }
 
 func stateMachineLooper(s string) (state, string, string) {
@@ -65,7 +77,7 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		case isNumber(char):
 			newState = number
 		case isSpace(char) || isNewLine(char):
-			newState = terminated
+			newState = whitespace
 		case isComma(char):
 			newState = comma
 		case isPlus(char):
@@ -85,7 +97,7 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		case isRParen(char):
 			newState = rParen
 		case isEqualSymbol(char):
-			newState = equal
+			newState = equals
 		case isSingleQuote(char):
 			newState = strSingle
 		case isDoubleQuote(char):
@@ -100,33 +112,37 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 			newState = illegalCharacter
 		}
 	case ident:
-		if isLetter(char) || isNumber(char) {
+		if isLetter(char) {
 			newState = ident
-		} else if isSpace(char) {
-			newState = terminated
 		} else {
-			newState = illegalCharacter
+			newState = terminated
 		}
 	case number:
 		if isNumber(char) {
 			newState = number
 		} else if isDot(char) {
+			newState = numberPeriod
+		} else if isE(char) {
+			newState = numberExp
+		} else {
+			newState = terminated
+		}
+	case numberPeriod:
+		if isNumber(char) {
+			newState = numberDecimal
+		} else {
+			newState = badlyFormedNumber
+		}
+	case numberDecimal:
+		if isNumber(char) {
 			newState = numberDecimal
 		} else if isE(char) {
 			newState = numberExp
 		} else {
 			newState = terminated
 		}
-	case numberDecimal:
-		if isNumber(char) {
-			newState = numberTerminal
-		} else if isE(char) {
-			newState = numberExp
-		} else {
-			newState = badlyFormedNumber
-		}
 	case numberExp:
-		if isNumber(char) || isMinus(char) {
+		if isNumber(char) || isMinus(char) || isPlus(char) {
 			newState = numberTerminal
 		} else {
 			newState = badlyFormedNumber
@@ -185,13 +201,15 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		newState = terminated
 	case rParen:
 		newState = terminated
-	case equal:
+	case equals:
 		newState = terminated
 	case comma:
 		newState = terminated
 	case period:
 		newState = terminated
 	case STRING:
+		newState = terminated
+	case whitespace:
 		newState = terminated
 	case terminated:
 		newState = start
@@ -203,8 +221,7 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 	case badlyFormedNumber:
 		newState = terminated
 	default:
-		newState = unknownState
-		fmt.Println("Unhandled Case! Lexeme: ", lexemeHolder, " Last Recorded state: ", newState)
+		newState = illegalCharacter
 	}
 	return newState, lexemeHolder
 }

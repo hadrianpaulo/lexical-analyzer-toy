@@ -15,6 +15,7 @@ const (
 	strSingle
 	strDouble
 	number
+	numberPeriod
 	numberDecimal
 	numberExp
 	numberDecimalExp
@@ -30,7 +31,10 @@ const (
 	rParen
 	comma
 	semicolon
-	equal
+	equals
+	period
+	STRING
+	whitespace
 	// termination state/signal
 	terminated
 	// Error States
@@ -38,8 +42,6 @@ const (
 	unterminatedString
 	badlyFormedNumber
 	unknownState
-	period
-	STRING
 )
 
 // single character analyzers
@@ -169,8 +171,29 @@ func isE(s string) bool {
 }
 
 func isNewLine(s string) bool {
-	if s != "\n" {
+	if s != "\n" || s == "\r" {
 		return false
 	}
 	return true
+}
+
+// just an error checker and catcher
+func check(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func pprint(s state) string {
+	switch s {
+	case numberDecimalExp:
+		return "number"
+	case numberExp:
+		return "number"
+	case numberTerminal:
+		return "number"
+	case numberDecimal:
+		return "number"
+	}
+	return string(s.String())
 }

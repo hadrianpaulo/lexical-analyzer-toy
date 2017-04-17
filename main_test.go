@@ -87,13 +87,13 @@ func TestIdentifySemicolon(t *testing.T) {
 func TestIdentifyEqual(t *testing.T) {
 	str := `=`
 	c, l, d := stateMachineLooper(str)
-	if c != equal || l != str {
+	if c != equals || l != str {
 		t.Error(`Expected: equal`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
 
 func TestIdentifyIdent(t *testing.T) {
-	str := `sad1 `
+	str := `sad `
 	c, l, d := stateMachineLooper(str)
 	if c != ident || l != str[:len(str)-1] {
 		t.Error(`Expected: ident`+str+`, got `, c, ": ", l, " :rem: ", d)
@@ -111,7 +111,7 @@ func TestIdentifyNormalNumber(t *testing.T) {
 func TestIdentifyDecimalNumber(t *testing.T) {
 	str := `123.2`
 	c, l, d := stateMachineLooper(str)
-	if c != numberTerminal || l != str {
+	if c != numberDecimal || l != str {
 		t.Error(`Expected: numberDecimal`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -203,27 +203,6 @@ func TestIdentifyBadExpNumber(t *testing.T) {
 	}
 }
 
-// func TestIdentifyBadDecimalExpNumber(t *testing.T) {
-// 	str := `123.12e.`
-// 	c, l, d := stateMachineLooper(str)
-// 	if c != badlyFormedNumber || l != str {
-// 		t.Error(`Expected: badlyFormedNumber`+str+`, got `, c, ": ", l, " :rem: ", d)
-// 	}
-// 	str1 := `123.123E1.`
-// 	c1, l1, d1 := stateMachineLooper(str1)
-// 	if c1 != badlyFormedNumber || l1 != str1 {
-// 		t.Error(`Expected: badlyFormedNumber`+str1+`, got `, c1, ": ", l1, " :rem: ", d1)
-// 	}
-// }
-
-// func TestIdentifyBadDecimalExpMinusNumber(t *testing.T) {
-// 	str := `123e-1.`
-// 	c, l, d := stateMachineLooper(str)
-// 	if c != badlyFormedNumber || l != str {
-// 		t.Error(`Expected: badlyFormedNumber`+str+`, got `, c, ": ", l, " :rem: ", d)
-// 	}
-// }
-
 func TestIdentifyIllegalCharacter(t *testing.T) {
 	str := `^`
 	c, l, d := stateMachineLooper(str)
@@ -232,10 +211,16 @@ func TestIdentifyIllegalCharacter(t *testing.T) {
 	}
 }
 
-// func TestIdentifyMultiple(t *testing.T) {
-// 	str := "123"
-// 	c, l, d := stateMachineLooper(str)
-// 	if c != comment || l != str {
-// 		t.Error(`Expected comment:`+str+`, got `, c, ": ", l, " :rem: ", d)
-// 	}
-// }
+func TestPprintNumber(t *testing.T) {
+	c := pprint(numberDecimalExp)
+	if c != "number" {
+		t.Error(`Expected: number, got `, c)
+	}
+}
+
+func TestPprintOther(t *testing.T) {
+	c := pprint(ident)
+	if c != "ident" {
+		t.Error(`Expected: ident, got `, c)
+	}
+}

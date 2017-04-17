@@ -13,4 +13,3 @@ RPAREN	)
 COMMA	,
 PERIOD	.
 EQUALS	=
-
