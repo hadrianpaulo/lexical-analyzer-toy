@@ -106,6 +106,12 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 			newState = MULT
 		case isDot(char):
 			newState = PERIOD
+		case isBang(char):
+			newState = BANG
+		case isGT(char):
+			newState = GT
+		case isLT(char):
+			newState = LT
 		case char == "":
 			newState = terminated
 		default:
@@ -209,7 +215,11 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 	case RPAREN:
 		newState = terminated
 	case EQUALS:
-		newState = terminated
+		if isEqualSymbol(char) {
+			newState = EQ
+		} else {
+			newState = terminated
+		}
 	case COMMA:
 		newState = terminated
 	case PERIOD:
@@ -223,6 +233,32 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 	case IF:
 		newState = terminated
 	case PRINT:
+		newState = terminated
+	case EQ:
+		newState = terminated
+	case BANG:
+		if isEqualSymbol(char) {
+			newState = NOTEQ
+		} else {
+			newState = ILLEGALCHARACTER
+		}
+	case NOTEQ:
+		newState = terminated
+	case GT:
+		if isEqualSymbol(char) {
+			newState = GTOREQ
+		} else {
+			newState = terminated
+		}
+	case LT:
+		if isEqualSymbol(char) {
+			newState = LTOREQ
+		} else {
+			newState = terminated
+		}
+	case GTOREQ:
+		newState = terminated
+	case LTOREQ:
 		newState = terminated
 	case terminated:
 		newState = start

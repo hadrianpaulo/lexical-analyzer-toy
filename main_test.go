@@ -264,3 +264,51 @@ func TestIdentifyIF(t *testing.T) {
 		t.Error(`Expected: IF `+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
+
+func TestIdentifyEQ(t *testing.T) {
+	str := "=="
+	c, l, d := stateMachineLooper(str)
+	if c != EQ || l != str {
+		t.Error(`Expected: EQ `+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+}
+
+func TestIdentifyNOTEQ(t *testing.T) {
+	str := "!="
+	c, l, d := stateMachineLooper(str)
+	if c != NOTEQ || l != str {
+		t.Error(`Expected: NOTEQ `+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+}
+
+func TestIdentifyGT(t *testing.T) {
+	str := ">"
+	c, l, d := stateMachineLooper(str)
+	if c != GT || l != str {
+		t.Error(`Expected: GT `+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+}
+
+func TestIdentifyGTOREQ(t *testing.T) {
+	str := ">="
+	c, l, d := stateMachineLooper(str)
+	if c != GTOREQ || l != str {
+		t.Error(`Expected: GTOREQ `+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+}
+
+func TestIdentifyLT(t *testing.T) {
+	str := "<"
+	c, l, d := stateMachineLooper(str)
+	if c != LT || l != str {
+		t.Error(`Expected: LT `+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+}
+
+func TestIdentifyLTOREQ(t *testing.T) {
+	str := "<="
+	c, l, d := stateMachineLooper(str)
+	if c != LTOREQ || l != str {
+		t.Error(`Expected: LTOREQ `+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+}

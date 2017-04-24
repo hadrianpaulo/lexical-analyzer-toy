@@ -35,6 +35,14 @@ const (
 	PERIOD
 	STRING
 	WHITESPACE
+	BANG
+	// relational operator states
+	EQ
+	GT
+	LT
+	GTOREQ
+	LTOREQ
+	NOTEQ
 	// termination state/signal
 	terminated
 	// reserved words
@@ -204,6 +212,27 @@ func isIF(s string) bool {
 
 func isPRINT(s string) bool {
 	if s == "PRINT" {
+		return true
+	}
+	return false
+}
+
+func isGT(s string) bool {
+	if s == ">" {
+		return true
+	}
+	return false
+}
+
+func isLT(s string) bool {
+	if s == "<" {
+		return true
+	}
+	return false
+}
+
+func isBang(s string) bool {
+	if s == "!" {
 		return true
 	}
 	return false
