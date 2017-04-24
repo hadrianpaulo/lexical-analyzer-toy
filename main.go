@@ -21,14 +21,14 @@ func main() {
 		fmt.Print(err)
 	}
 	defer f.Close()
-	c, l, d := stateMachineLooper(str)
+	c, l, d := tokenizer(str)
 	w := bufio.NewWriter(f)
 
 	_, err = fmt.Fprintf(w, "%v %v\n", prettyPrint(c), l)
 	check(err)
 	w.Flush()
 	for d != "" {
-		c, l, d = stateMachineLooper(d)
+		c, l, d = tokenizer(d)
 		if c != WHITESPACE {
 			_, err = fmt.Fprintf(w, "%v %v\n", prettyPrint(c), l)
 			check(err)
@@ -38,7 +38,7 @@ func main() {
 	f.Sync()
 }
 
-func stateMachineLooper(s string) (state, string, string) {
+func tokenizer(s string) (state, string, string) {
 	lexemeHolder := ""
 	currentState := start
 	prevState := start
@@ -52,7 +52,7 @@ func stateMachineLooper(s string) (state, string, string) {
 			over = true
 		}
 		prevState = currentState
-		currentState, lexemeHolder = stateMachine(currentState, str, lexemeHolder)
+		currentState, lexemeHolder = tokenIdentifier(currentState, str, lexemeHolder)
 		counter++
 	}
 	rem := ""
@@ -66,7 +66,7 @@ func stateMachineLooper(s string) (state, string, string) {
 	return prevState, lexemeHolder[:len(lexemeHolder)], rem
 }
 
-func stateMachine(currentState state, char string, lexemeHolder string) (state, string) {
+func tokenIdentifier(currentState state, char string, lexemeHolder string) (state, string) {
 	var newState state
 	lexemeHolder += char
 	switch currentState {
