@@ -23,7 +23,7 @@ func TestIdentifyDoubleQuoteString(t *testing.T) {
 func TestIdentifyPlus(t *testing.T) {
 	str := `+`
 	c, l, d := stateMachineLooper(str)
-	if c != plus || l != str {
+	if c != PLUS || l != str {
 		t.Error(`Expected plus: `+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -31,7 +31,7 @@ func TestIdentifyPlus(t *testing.T) {
 func TestIdentifyMinus(t *testing.T) {
 	str := `-`
 	c, l, d := stateMachineLooper(str)
-	if c != minus || l != str {
+	if c != MINUS || l != str {
 		t.Error(`Expected: minus`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -39,7 +39,7 @@ func TestIdentifyMinus(t *testing.T) {
 func TestIdentifyMult(t *testing.T) {
 	str := `*`
 	c, l, d := stateMachineLooper(str)
-	if c != mult || l != str {
+	if c != MULT || l != str {
 		t.Error(`Expected: mult`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -47,7 +47,7 @@ func TestIdentifyMult(t *testing.T) {
 func TestIdentifyMod(t *testing.T) {
 	str := `%`
 	c, l, d := stateMachineLooper(str)
-	if c != mod || l != str {
+	if c != MOD || l != str {
 		t.Error(`Expected: mod`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -55,7 +55,7 @@ func TestIdentifyMod(t *testing.T) {
 func TestIdentifyLParen(t *testing.T) {
 	str := `(`
 	c, l, d := stateMachineLooper(str)
-	if c != lParen || l != str {
+	if c != LPAREN || l != str {
 		t.Error(`Expected: lParen`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -63,7 +63,7 @@ func TestIdentifyLParen(t *testing.T) {
 func TestIdentifyRParen(t *testing.T) {
 	str := `)`
 	c, l, d := stateMachineLooper(str)
-	if c != rParen || l != str {
+	if c != RPAREN || l != str {
 		t.Error(`Expected: rParen`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -71,7 +71,7 @@ func TestIdentifyRParen(t *testing.T) {
 func TestIdentifyComma(t *testing.T) {
 	str := `,`
 	c, l, d := stateMachineLooper(str)
-	if c != comma || l != str {
+	if c != COMMA || l != str {
 		t.Error(`Expected: comma`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -79,7 +79,7 @@ func TestIdentifyComma(t *testing.T) {
 func TestIdentifySemicolon(t *testing.T) {
 	str := `;`
 	c, l, d := stateMachineLooper(str)
-	if c != semicolon || l != str {
+	if c != SEMICOLON || l != str {
 		t.Error(`Expected: semicolon`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -87,7 +87,7 @@ func TestIdentifySemicolon(t *testing.T) {
 func TestIdentifyEqual(t *testing.T) {
 	str := `=`
 	c, l, d := stateMachineLooper(str)
-	if c != equals || l != str {
+	if c != EQUALS || l != str {
 		t.Error(`Expected: equal`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -95,7 +95,7 @@ func TestIdentifyEqual(t *testing.T) {
 func TestIdentifyIdent(t *testing.T) {
 	str := `sad `
 	c, l, d := stateMachineLooper(str)
-	if c != ident || l != str[:len(str)-1] {
+	if c != IDENT || l != str[:len(str)-1] {
 		t.Error(`Expected: ident`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -103,7 +103,7 @@ func TestIdentifyIdent(t *testing.T) {
 func TestIdentifyNormalNumber(t *testing.T) {
 	str := `123`
 	c, l, d := stateMachineLooper(str)
-	if c != number || l != str {
+	if c != NUMBER || l != str {
 		t.Error(`Expected: number`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -153,7 +153,7 @@ func TestIdentifyDecimalExpMinusNumber(t *testing.T) {
 func TestIdentifyExp(t *testing.T) {
 	str := `**`
 	c, l, d := stateMachineLooper(str)
-	if c != exp || l != str {
+	if c != EXP || l != str {
 		t.Error(`Expected exp: **, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -161,7 +161,7 @@ func TestIdentifyExp(t *testing.T) {
 func TestIdentifyDiv(t *testing.T) {
 	str := `/`
 	c, l, d := stateMachineLooper(str)
-	if c != div || l != str {
+	if c != DIV || l != str {
 		t.Error(`Expected div:`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -169,7 +169,7 @@ func TestIdentifyDiv(t *testing.T) {
 func TestIdentifyComment(t *testing.T) {
 	str := "// dsadas \n"
 	c, l, d := stateMachineLooper(str)
-	if c != comment || l != str[:len(str)-1] {
+	if c != COMMENT || l != str[:len(str)-1] {
 		t.Error(`Expected comment:`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -177,7 +177,7 @@ func TestIdentifyComment(t *testing.T) {
 func TestIdentifyBadNormalNumber(t *testing.T) {
 	str := `12..`
 	c, l, d := stateMachineLooper(str)
-	if c != badlyFormedNumber || l != str {
+	if c != BADLYFORMEDNUMBER || l != str {
 		t.Error(`Expected: badlyFormedNumber`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -185,7 +185,7 @@ func TestIdentifyBadNormalNumber(t *testing.T) {
 func TestIdentifyBadDecimalNumber(t *testing.T) {
 	str := `123.=`
 	c, l, d := stateMachineLooper(str)
-	if c != badlyFormedNumber || l != str {
+	if c != BADLYFORMEDNUMBER || l != str {
 		t.Error(`Expected: badlyFormedNumber`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -193,12 +193,12 @@ func TestIdentifyBadDecimalNumber(t *testing.T) {
 func TestIdentifyBadExpNumber(t *testing.T) {
 	str := `123e=`
 	c, l, d := stateMachineLooper(str)
-	if c != badlyFormedNumber || l != str {
+	if c != BADLYFORMEDNUMBER || l != str {
 		t.Error(`Expected: badlyFormedNumber`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 	str1 := `123E.`
 	c1, l1, d1 := stateMachineLooper(str1)
-	if c1 != badlyFormedNumber || l1 != str1 {
+	if c1 != BADLYFORMEDNUMBER || l1 != str1 {
 		t.Error(`Expected: badlyFormedNumber `+str1+`, got `, c1, ": ", l1, " :rem: ", d1)
 	}
 }
@@ -206,29 +206,29 @@ func TestIdentifyBadExpNumber(t *testing.T) {
 func TestIdentifyIllegalCharacter(t *testing.T) {
 	str := `^`
 	c, l, d := stateMachineLooper(str)
-	if c != illegalCharacter || l != str {
+	if c != ILLEGALCHARACTER || l != str {
 		t.Error(`Expected: illegal character`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
 
 func TestPrettyPrintNumber(t *testing.T) {
 	c := prettyPrint(numberDecimalExp)
-	if c != "number" {
-		t.Error(`Expected: number, got `, c)
+	if c != "NUMBER" {
+		t.Error(`Expected: NUMBER, got `, c)
 	}
 }
 
 func TestPrettyPrintOther(t *testing.T) {
-	c := prettyPrint(ident)
-	if c != "ident" {
-		t.Error(`Expected: ident, got `, c)
+	c := prettyPrint(IDENT)
+	if c != "IDENT" {
+		t.Error(`Expected: IDENT, got `, c)
 	}
 }
 
 func TestIdentifyNewLine(t *testing.T) {
 	str := "\n"
 	c, l, d := stateMachineLooper(str)
-	if c != whitespace || l != str {
+	if c != WHITESPACE || l != str {
 		t.Error(`Expected: whitespace`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }
@@ -236,7 +236,31 @@ func TestIdentifyNewLine(t *testing.T) {
 func TestIdentifyWhiteSpace(t *testing.T) {
 	str := " "
 	c, l, d := stateMachineLooper(str)
-	if c != whitespace || l != str {
+	if c != WHITESPACE || l != str {
 		t.Error(`Expected: whitespace`+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+}
+
+func TestIdentifySQRT(t *testing.T) {
+	str := "SQRT"
+	c, l, d := stateMachineLooper(str)
+	if c != SQRT || l != str {
+		t.Error(`Expected: SQRT `+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+}
+
+func TestIdentifyPRINT(t *testing.T) {
+	str := "PRINT"
+	c, l, d := stateMachineLooper(str)
+	if c != PRINT || l != str {
+		t.Error(`Expected: PRINT `+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+}
+
+func TestIdentifyIF(t *testing.T) {
+	str := "IF"
+	c, l, d := stateMachineLooper(str)
+	if c != IF || l != str {
+		t.Error(`Expected: IF `+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }

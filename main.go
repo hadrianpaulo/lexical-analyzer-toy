@@ -29,7 +29,7 @@ func main() {
 	w.Flush()
 	for d != "" {
 		c, l, d = stateMachineLooper(d)
-		if c != whitespace {
+		if c != WHITESPACE {
 			_, err = fmt.Fprintf(w, "%v %v\n", prettyPrint(c), l)
 			check(err)
 			w.Flush()
@@ -73,53 +73,60 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 	case start:
 		switch {
 		case isLetter(char):
-			newState = ident
+			newState = IDENT
 		case isNumber(char):
-			newState = number
+			newState = NUMBER
 		case isSpace(char) || isNewLine(char):
-			newState = whitespace
+			newState = WHITESPACE
 		case isComma(char):
-			newState = comma
+			newState = COMMA
 		case isPlus(char):
-			newState = plus
+			newState = PLUS
 		case isMinus(char):
-			newState = minus
+			newState = MINUS
 		case isSlash(char):
-			newState = div
+			newState = DIV
 		case isMod(char):
-			newState = mod
+			newState = MOD
 		case isComma(char):
-			newState = comma
+			newState = COMMA
 		case isSemicolon(char):
-			newState = semicolon
+			newState = SEMICOLON
 		case isLParen(char):
-			newState = lParen
+			newState = LPAREN
 		case isRParen(char):
-			newState = rParen
+			newState = RPAREN
 		case isEqualSymbol(char):
-			newState = equals
+			newState = EQUALS
 		case isSingleQuote(char):
 			newState = strSingle
 		case isDoubleQuote(char):
 			newState = strDouble
 		case isStar(char):
-			newState = mult
+			newState = MULT
 		case isDot(char):
-			newState = period
+			newState = PERIOD
 		case char == "":
 			newState = terminated
 		default:
-			newState = illegalCharacter
+			newState = ILLEGALCHARACTER
 		}
-	case ident:
+	case IDENT:
 		if isLetter(char) {
-			newState = ident
+			newState = IDENT
+			if isSQRT(lexemeHolder) {
+				newState = SQRT
+			} else if isPRINT(lexemeHolder) {
+				newState = PRINT
+			} else if isIF(lexemeHolder) {
+				newState = IF
+			}
 		} else {
 			newState = terminated
 		}
-	case number:
+	case NUMBER:
 		if isNumber(char) {
-			newState = number
+			newState = NUMBER
 		} else if isDot(char) {
 			newState = numberPeriod
 		} else if isE(char) {
@@ -131,7 +138,7 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		if isNumber(char) {
 			newState = numberDecimal
 		} else {
-			newState = badlyFormedNumber
+			newState = BADLYFORMEDNUMBER
 		}
 	case numberDecimal:
 		if isNumber(char) {
@@ -145,7 +152,7 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		if isNumber(char) || isMinus(char) || isPlus(char) {
 			newState = numberTerminal
 		} else {
-			newState = badlyFormedNumber
+			newState = BADLYFORMEDNUMBER
 		}
 	case numberTerminal:
 		if isNumber(char) {
@@ -157,7 +164,7 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		if isSingleQuote(char) {
 			newState = STRING
 		} else if isNewLine(char) {
-			newState = unterminatedString
+			newState = UNTERMINATEDSTRING
 		} else {
 			newState = strSingle
 		}
@@ -165,63 +172,69 @@ func stateMachine(currentState state, char string, lexemeHolder string) (state, 
 		if isDoubleQuote(char) {
 			newState = STRING
 		} else if isNewLine(char) {
-			newState = unterminatedString
+			newState = UNTERMINATEDSTRING
 		} else {
 			newState = strDouble
 		}
-	case mult:
+	case MULT:
 		if isStar(char) {
-			newState = exp
+			newState = EXP
 		} else {
 			newState = terminated
 		}
-	case div:
+	case DIV:
 		if isSlash(char) {
-			newState = comment
+			newState = COMMENT
 		} else {
 			newState = terminated
 		}
-	case comment:
+	case COMMENT:
 		if isNewLine(char) {
 			newState = terminated
 		} else {
-			newState = comment
+			newState = COMMENT
 		}
-	case exp:
+	case EXP:
 		newState = terminated
-	case plus:
+	case PLUS:
 		newState = terminated
-	case minus:
+	case MINUS:
 		newState = terminated
-	case mod:
+	case MOD:
 		newState = terminated
-	case semicolon:
+	case SEMICOLON:
 		newState = terminated
-	case lParen:
+	case LPAREN:
 		newState = terminated
-	case rParen:
+	case RPAREN:
 		newState = terminated
-	case equals:
+	case EQUALS:
 		newState = terminated
-	case comma:
+	case COMMA:
 		newState = terminated
-	case period:
+	case PERIOD:
 		newState = terminated
 	case STRING:
 		newState = terminated
-	case whitespace:
+	case WHITESPACE:
+		newState = terminated
+	case SQRT:
+		newState = terminated
+	case IF:
+		newState = terminated
+	case PRINT:
 		newState = terminated
 	case terminated:
 		newState = start
 		lexemeHolder = ""
-	case illegalCharacter:
+	case ILLEGALCHARACTER:
 		newState = terminated
-	case unterminatedString:
+	case UNTERMINATEDSTRING:
 		newState = terminated
-	case badlyFormedNumber:
+	case BADLYFORMEDNUMBER:
 		newState = terminated
 	default:
-		newState = illegalCharacter
+		newState = ILLEGALCHARACTER
 	}
 	return newState, lexemeHolder
 }

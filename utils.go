@@ -11,36 +11,40 @@ type state int
 const (
 	start state = iota
 	// Accepting states
-	ident
+	IDENT
 	strSingle
 	strDouble
-	number
+	NUMBER
 	numberPeriod
 	numberDecimal
 	numberExp
 	numberDecimalExp
 	numberTerminal
-	mult
-	exp
-	comment
-	plus
-	minus
-	div
-	mod
-	lParen
-	rParen
-	comma
-	semicolon
-	equals
-	period
+	MULT
+	EXP
+	COMMENT
+	PLUS
+	MINUS
+	DIV
+	MOD
+	LPAREN
+	RPAREN
+	COMMA
+	SEMICOLON
+	EQUALS
+	PERIOD
 	STRING
-	whitespace
+	WHITESPACE
 	// termination state/signal
 	terminated
+	// reserved words
+	IF
+	SQRT
+	PRINT
 	// Error States
-	illegalCharacter
-	unterminatedString
-	badlyFormedNumber
+	ILLEGALCHARACTER
+	UNTERMINATEDSTRING
+	BADLYFORMEDNUMBER
 	unknownState
 )
 
@@ -184,16 +188,37 @@ func check(err error) {
 	}
 }
 
+func isSQRT(s string) bool {
+	if s == "SQRT" {
+		return true
+	}
+	return false
+}
+
+func isIF(s string) bool {
+	if s == "IF" {
+		return true
+	}
+	return false
+}
+
+func isPRINT(s string) bool {
+	if s == "PRINT" {
+		return true
+	}
+	return false
+}
+
 func prettyPrint(s state) string {
 	switch s {
 	case numberDecimalExp:
-		return "number"
+		return "NUMBER"
 	case numberExp:
-		return "number"
+		return "NUMBER"
 	case numberTerminal:
-		return "number"
+		return "NUMBER"
 	case numberDecimal:
-		return "number"
+		return "NUMBER"
 	}
 	return string(s.String())
 }
