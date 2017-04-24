@@ -211,16 +211,16 @@ func TestIdentifyIllegalCharacter(t *testing.T) {
 	}
 }
 
-func TestPrettyPrintNumber(t *testing.T) {
-	c := prettyPrint(numberDecimalExp)
-	if c != "NUMBER" {
+func TestConvertNumberStateNumber(t *testing.T) {
+	c := convertNumberState(numberDecimalExp)
+	if c != NUMBER {
 		t.Error(`Expected: NUMBER, got `, c)
 	}
 }
 
-func TestPrettyPrintOther(t *testing.T) {
-	c := prettyPrint(IDENT)
-	if c != "IDENT" {
+func TestConvertNumberStateOther(t *testing.T) {
+	c := convertNumberState(IDENT)
+	if c != IDENT {
 		t.Error(`Expected: IDENT, got `, c)
 	}
 }

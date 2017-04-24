@@ -1,5 +1,11 @@
 package main
 
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
 //go:generate stringer -type=state
 type state int
 
@@ -51,16 +57,33 @@ const (
 	unknownState
 )
 
-func prettyPrint(s state) string {
+func convertNumberState(s state) state {
 	switch s {
 	case numberDecimalExp:
-		return "NUMBER"
+		return NUMBER
 	case numberExp:
-		return "NUMBER"
+		return NUMBER
 	case numberTerminal:
-		return "NUMBER"
+		return NUMBER
 	case numberDecimal:
-		return "NUMBER"
+		return NUMBER
 	}
-	return string(s.String())
+	return s
+}
+
+func writeToFile(fn string, tokens []state, lexemes []string) {
+	f, err := os.Create(fn)
+	if err != nil {
+		fmt.Print(err)
+	}
+	defer f.Close()
+
+	w := bufio.NewWriter(f)
+
+	for i := range tokens {
+		_, err = fmt.Fprintf(w, "%v %v\n", tokens[i], lexemes[i])
+		check(err)
+		w.Flush()
+	}
+	f.Sync()
 }

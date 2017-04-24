@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -9,31 +8,27 @@ import (
 
 func main() {
 	inputFile := os.Args[1]
+	outputFile := os.Args[2]
 	b, err := ioutil.ReadFile(inputFile)
 	if err != nil {
 		fmt.Print(err)
 	}
 	str := string(b)
 
-	outputFile := os.Args[2]
-	f, err := os.Create(outputFile)
-	if err != nil {
-		fmt.Print(err)
-	}
-	defer f.Close()
-	c, l, d := tokenizer(str)
-	w := bufio.NewWriter(f)
+	var tokenQueue []state
+	var lexemeQueue []string
 
-	_, err = fmt.Fprintf(w, "%v %v\n", prettyPrint(c), l)
-	check(err)
-	w.Flush()
+	token, lexeme, d := tokenizer(str)
+
+	tokenQueue = append(tokenQueue, convertNumberState(token))
+	lexemeQueue = append(lexemeQueue, lexeme)
+
 	for d != "" {
-		c, l, d = tokenizer(d)
-		if c != WHITESPACE {
-			_, err = fmt.Fprintf(w, "%v %v\n", prettyPrint(c), l)
-			check(err)
-			w.Flush()
+		token, lexeme, d = tokenizer(d)
+		if token != WHITESPACE {
+			tokenQueue = append(tokenQueue, convertNumberState(token))
+			lexemeQueue = append(lexemeQueue, lexeme)
 		}
 	}
-	f.Sync()
+	writeToFile(outputFile, tokenQueue, lexemeQueue)
 }

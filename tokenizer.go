@@ -1,9 +1,9 @@
 package main
 
-func tokenizer(s string) (state, string, string) {
+func tokenizer(s string) (token state, lexeme string, remaining string) {
 	lexemeHolder := ""
 	currentState := start
-	prevState := start
+	token = start
 	counter := 0
 	over := false
 	for currentState != terminated {
@@ -13,19 +13,19 @@ func tokenizer(s string) (state, string, string) {
 		} else {
 			over = true
 		}
-		prevState = currentState
+		token = currentState
 		currentState, lexemeHolder = tokenIdentifier(currentState, str, lexemeHolder)
 		counter++
 	}
-	rem := ""
+	remaining = ""
 	if counter-1 <= len(s) {
-		rem = s[counter-1:]
+		remaining = s[counter-1:]
 	}
 	if !over {
 		lexemeHolder = lexemeHolder[:len(lexemeHolder)-1]
 	}
 
-	return prevState, lexemeHolder[:len(lexemeHolder)], rem
+	return token, lexemeHolder[:len(lexemeHolder)], remaining
 }
 
 func tokenIdentifier(currentState state, char string, lexemeHolder string) (state, string) {
