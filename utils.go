@@ -171,10 +171,10 @@ func isE(s string) bool {
 }
 
 func isNewLine(s string) bool {
-	if s != "\n" || s == "\r" {
-		return false
+	if s == "\n" || s == "\r" {
+		return true
 	}
-	return true
+	return false
 }
 
 // just an error checker and catcher
@@ -184,7 +184,7 @@ func check(err error) {
 	}
 }
 
-func pprint(s state) string {
+func prettyPrint(s state) string {
 	switch s {
 	case numberDecimalExp:
 		return "number"

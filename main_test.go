@@ -211,16 +211,32 @@ func TestIdentifyIllegalCharacter(t *testing.T) {
 	}
 }
 
-func TestPprintNumber(t *testing.T) {
-	c := pprint(numberDecimalExp)
+func TestPrettyPrintNumber(t *testing.T) {
+	c := prettyPrint(numberDecimalExp)
 	if c != "number" {
 		t.Error(`Expected: number, got `, c)
 	}
 }
 
-func TestPprintOther(t *testing.T) {
-	c := pprint(ident)
+func TestPrettyPrintOther(t *testing.T) {
+	c := prettyPrint(ident)
 	if c != "ident" {
 		t.Error(`Expected: ident, got `, c)
+	}
+}
+
+func TestIdentifyNewLine(t *testing.T) {
+	str := "\n"
+	c, l, d := stateMachineLooper(str)
+	if c != whitespace || l != str {
+		t.Error(`Expected: whitespace`+str+`, got `, c, ": ", l, " :rem: ", d)
+	}
+}
+
+func TestIdentifyWhiteSpace(t *testing.T) {
+	str := " "
+	c, l, d := stateMachineLooper(str)
+	if c != whitespace || l != str {
+		t.Error(`Expected: whitespace`+str+`, got `, c, ": ", l, " :rem: ", d)
 	}
 }

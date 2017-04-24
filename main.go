@@ -24,13 +24,13 @@ func main() {
 	c, l, d := stateMachineLooper(str)
 	w := bufio.NewWriter(f)
 
-	_, err = fmt.Fprintf(w, "%v %v\n", pprint(c), l)
+	_, err = fmt.Fprintf(w, "%v %v\n", prettyPrint(c), l)
 	check(err)
 	w.Flush()
 	for d != "" {
 		c, l, d = stateMachineLooper(d)
 		if c != whitespace {
-			_, err = fmt.Fprintf(w, "%v %v\n", pprint(c), l)
+			_, err = fmt.Fprintf(w, "%v %v\n", prettyPrint(c), l)
 			check(err)
 			w.Flush()
 		}
