@@ -1,0 +1,7 @@
+disc = 10**2 - (4*5.5*(-3));
+IF (disc >= 0) root1 = (-10 + SQRT(disc))/(2*5.5);
+IF (disc >= 0) root2 = (-10 - SQRT(disc))/(2*5.5);
+PRINT(root1);
+PRINT(root2);
+IF (disc < 0) PRINT("no real roots");
+PRINT("thank you");
