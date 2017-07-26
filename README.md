@@ -17,6 +17,3 @@ Using the CMD:
 1. Make sure to have Go 1.7+ installed.
 2. Navigate to directory.
 3. Run the ``go build`` command
-
-## Note to Dr. Vergara
-I apologize for the late submission as I had difficulties with the project. I also attended a short course abroad from April 1-10, 2017 which took a considerable amount of time from my studies. Thank you for your kind consideration.
